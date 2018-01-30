@@ -48,7 +48,7 @@ def load_movies():
         row = row[0:5]
         # not taking into account the extra indices @ end
         movie_id, title, released_at, blank, imdb_url = row
-        title = title[0:-6]
+        title = title[0:-7]
         if released_at:
             released_at = datetime.datetime.strptime(released_at, "%d-%b-%Y")
             # why datetime twice??? A: b/c it doesn't run otherwise
