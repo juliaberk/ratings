@@ -26,6 +26,27 @@ def index():
     return render_template("homepage.html")
 
 
+@app.route('/users')
+def user_list():
+    """Show list of users"""
+
+    users = User.query.all()
+    return render_template("user_list.html", users=users)
+
+@app.route('/register', methods=["GET"])
+def register_user():
+    """Register user"""
+
+    email = request.args.get("email")
+    password = request.args.get("password")
+
+    return render_template("register.html", email=email, password=password)
+
+@app.route('/register', methods=["POST"])
+    def register_process():
+        """Update database with new user"""
+
+
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
