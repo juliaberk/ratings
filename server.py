@@ -37,15 +37,31 @@ def user_list():
 def register_user():
     """Register user"""
 
-    email = request.args.get("email")
-    password = request.args.get("password")
-
-    return render_template("register.html", email=email, password=password)
+    return render_template("register.html")
 
 @app.route('/register', methods=["POST"])
-    def register_process():
-        """Update database with new user"""
+def register_process():
+    """Update database with new user"""
 
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    email_check = User.query
+    email_check = email_check.filter(User.email == email).first()
+
+    if email_check is not None:
+        flash('This user already exists in the database')
+        # Return error; user already registered
+        return render_template('register.html')
+    else:
+        # send user information to database
+        user_to_add = User(email=email, password=password)
+        db.session.add(user_to_add)
+        db.session.commit()
+        flash('New user created!')
+        session['user'] = (email, password,)
+
+        return redirect("/")
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
