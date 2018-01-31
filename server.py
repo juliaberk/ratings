@@ -59,9 +59,28 @@ def register_process():
         db.session.add(user_to_add)
         db.session.commit()
         flash('New user created!')
-        session['user'] = (email, password,)
 
         return redirect("/")
+
+@app.route('/login', methods=["GET"])
+def  user_login():
+    """Show form to allow user to login"""
+
+    return render_template("login.html")
+
+@app.route('/login', methods=["POST"])
+def credential_verification():
+    """Verify user credentials"""
+
+    # get email and password from form
+    # check database for email and if email is in the database, check if
+    # the password submitted matches password already in database. Grab ID.
+    # if login doesn't work,  flash message "Your email or password does not match"
+    # if login does work, add id to the session, redirected to homepage
+    # flash "Login successful" message
+
+    return redirect('/')
+
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
