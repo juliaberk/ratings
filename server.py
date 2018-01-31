@@ -62,24 +62,50 @@ def register_process():
 
         return redirect("/")
 
+
 @app.route('/login', methods=["GET"])
-def  user_login():
+def user_login():
     """Show form to allow user to login"""
 
     return render_template("login.html")
+
 
 @app.route('/login', methods=["POST"])
 def credential_verification():
     """Verify user credentials"""
 
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    email_check = User.query #stepone
+    
+    email_check = email_check.filter(User.email == email).first()
+
+    if email_check is None:
+        flash("Email is not registered, please register.")
+        return redirect('/register')
+
+    elif email_check is not None:
+        password_check = User.query
+        password_check = password_check.filter(User.password == password).first()
+        if password_check is not None: #if their username and password are good...
+            user_id = User.user_id # Add their user id to the session
+            print "***USER ID*** ", user_id
+            # session["user id"] = user_id # key is string
+            flash("Welcome Home! Login successful")
+            return redirect('/')
+            # return homepage, tell them login successful
+        else:
+            flash("SORRY NOT SORRY. Access denied.")
+            return redirect('/login')
+            # Take them back to login, tell them their password sucks
+            
     # get email and password from form
     # check database for email and if email is in the database, check if
     # the password submitted matches password already in database. Grab ID.
     # if login doesn't work,  flash message "Your email or password does not match"
     # if login does work, add id to the session, redirected to homepage
     # flash "Login successful" message
-
-    return redirect('/')
 
 
 if __name__ == "__main__":
