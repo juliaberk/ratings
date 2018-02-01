@@ -31,6 +31,7 @@ def user_list():
     """Show list of users"""
 
     users = User.query.all()
+    # user list looped through in Jinja
     return render_template("user_list.html", users=users)
 
 @app.route('/register', methods=["GET"])
@@ -44,14 +45,17 @@ def register_process():
     """Update database with new user"""
 
     email = request.form.get("email")
+    # user inputted email
     password = request.form.get("password")
+    # user inputted password
 
     user = User.query.filter(User.email == email).first()
+    # gets user object
 
     if user is not None:
         flash('This user already exists in the database')
         # Return error; user already registered
-        return render_template('login.html')
+        return redirect('/login')
     else:
         # send user information to database
         user_to_add = User(email=email, password=password)
@@ -74,9 +78,12 @@ def credential_verification():
     """Verify user credentials"""
 
     email = request.form.get("email")
+    # user inputted email
     password_input = request.form.get("password")
+    # user inputted password
 
     user = User.query.filter(User.email == email).first()
+    # user object!!!!!!!!!!!1!
 
     if user is None: # check if database matches user input
         flash("Email is not registered, please register.")
@@ -89,11 +96,14 @@ def credential_verification():
     else:
         
         if password_input == user.password:
+        # compare user inputted password compared to password attached to user object    
 
             session["current_user_id"] = user.user_id
-            print "***TEST*** ", session['current_user_id'] 
+            # storing user_id attached to user object in session
             flash("Welcome Home! Login successful")
             return redirect("/users/{}".format(user.user_id))
+            # URL modified with user id attached to user object
+            # ...Jinja later
 
         else:
             flash("SORRY NOT SORRY. Access denied.")
@@ -105,7 +115,7 @@ def user_logout():
     """Log user out of session"""
 
     del session["current_user_id"]
-    
+    # delete session key
     # should the logout button only show up is user is logged in??
     # ...later
 
