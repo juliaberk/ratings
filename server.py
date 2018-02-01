@@ -46,13 +46,12 @@ def register_process():
     email = request.form.get("email")
     password = request.form.get("password")
 
-    email_check = User.query
-    email_check = email_check.filter(User.email == email).first()
+    user = User.query.filter(User.email == email).first()
 
-    if email_check is not None:
+    if user is not None:
         flash('This user already exists in the database')
         # Return error; user already registered
-        return render_template('register.html')
+        return render_template('login.html')
     else:
         # send user information to database
         user_to_add = User(email=email, password=password)
@@ -77,26 +76,24 @@ def credential_verification():
     email = request.form.get("email")
     password_input = request.form.get("password")
 
-    current_login = User.query # stepone
-    
-    current_login = current_login.filter(User.email == email).first()
-    # user object
+    user = User.query.filter(User.email == email).first()
 
-    if current_login is None: # check if database matches user input
+    if user is None: # check if database matches user input
         flash("Email is not registered, please register.")
         return redirect('/register')
 
     # password_input is password inputted by user
     # next step: compare password_input to password attribute on instance of user object
 
-    elif current_login is not None:
+    # If user exists
+    else:
         
-        if password_input == current_login.password:
+        if password_input == user.password:
 
-            session["current_user_id"] = current_login.user_id
+            session["current_user_id"] = user.user_id
             print "***TEST*** ", session['current_user_id'] 
             flash("Welcome Home! Login successful")
-            return redirect("/")
+            return redirect("/users/{}".format(user.user_id))
 
         else:
             flash("SORRY NOT SORRY. Access denied.")
@@ -107,9 +104,10 @@ def credential_verification():
 def user_logout():
     """Log user out of session"""
 
-    session["current_user_id"] = None
-    print "***VALUE REMOVED???*** ", session["current_user_id"]
+    del session["current_user_id"]
+    
     # should the logout button only show up is user is logged in??
+    # ...later
 
     flash("User successfully logged out!")
     return redirect('/')
@@ -122,6 +120,9 @@ def user_logout():
     # if login does work, add id to the session, redirected to homepage
     # flash "Login successful" message
 
+#### USER DETAILS PSEUDOCODE
+    # Page with all users
+    # click on a user and go to the page with their age, zipcode, movies rated
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
