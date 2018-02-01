@@ -34,6 +34,27 @@ def user_list():
     # user list looped through in Jinja
     return render_template("user_list.html", users=users)
 
+
+@app.route('/users/<user_id>')
+def show_user_details(user_id):
+    """Show an individual user's information"""
+
+    # if coming from login page - show info from session
+    # if coming from user_list, show info from link
+
+    user = User.query.filter_by(user_id=user_id).first()
+    # user OBJECT
+
+    # with rating id, get movie_id
+    # with movie id, get movie title
+    # display all in jinja!
+
+    # rating_object_list = Rating.query.filter(Ratings.user_id==923).all()
+    print "***TEST*** ", user
+
+    return render_template("user.html", user=user) # pass user object
+
+
 @app.route('/register', methods=["GET"])
 def register_user():
     """Register user"""
@@ -101,7 +122,7 @@ def credential_verification():
             session["current_user_id"] = user.user_id
             # storing user_id attached to user object in session
             flash("Welcome Home! Login successful")
-            return redirect("/users/{}".format(user.user_id))
+            return redirect("/users/{}".format(user.user_id), user_id=user_id)
             # URL modified with user id attached to user object
             # ...Jinja later
 
