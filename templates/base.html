@@ -14,10 +14,20 @@
 </head>
 
 <body>
-  Ratings
-  <hr>
 
-  {% block content %} put your content here {% endblock %}
+  <form method="POST" action="/logout" >
+    <button type="submit" name="logout">Log Out</button>
+  </form>
+
+  {% block content %}
+
+
+  put your content here 
+
+
+  {% endblock %}
 
 </body>
+
+
 </html>

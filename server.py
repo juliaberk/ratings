@@ -75,30 +75,45 @@ def credential_verification():
     """Verify user credentials"""
 
     email = request.form.get("email")
-    password = request.form.get("password")
+    password_input = request.form.get("password")
 
-    email_check = User.query #stepone
+    current_login = User.query # stepone
     
-    email_check = email_check.filter(User.email == email).first()
+    current_login = current_login.filter(User.email == email).first()
+    # user object
 
-    if email_check is None:
+    if current_login is None: # check if database matches user input
         flash("Email is not registered, please register.")
         return redirect('/register')
 
-    elif email_check is not None:
-        password_check = User.query
-        password_check = password_check.filter(User.password == password).first()
-        if password_check is not None: #if their username and password are good...
-            user_id = User.user_id # Add their user id to the session
-            print "***USER ID*** ", user_id
-            # session["user id"] = user_id # key is string
+    # password_input is password inputted by user
+    # next step: compare password_input to password attribute on instance of user object
+
+    elif current_login is not None:
+        
+        if password_input == current_login.password:
+
+            session["current_user_id"] = current_login.user_id
+            print "***TEST*** ", session['current_user_id'] 
             flash("Welcome Home! Login successful")
-            return redirect('/')
-            # return homepage, tell them login successful
+            return redirect("/")
+
         else:
             flash("SORRY NOT SORRY. Access denied.")
-            return redirect('/login')
-            # Take them back to login, tell them their password sucks
+            return redirect("/login")
+
+
+@app.route('/logout', methods=["POST"])
+def user_logout():
+    """Log user out of session"""
+
+    session["current_user_id"] = None
+    print "***VALUE REMOVED???*** ", session["current_user_id"]
+    # should the logout button only show up is user is logged in??
+
+    flash("User successfully logged out!")
+    return redirect('/')
+
             
     # get email and password from form
     # check database for email and if email is in the database, check if
